@@ -21,6 +21,15 @@ h1 {
 .controls {
   margin-bottom: 20px;
   text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.controls .row {
+  display: flex;
+  align-items: center; /* Center items vertically */
+  margin-bottom: 10px;
 }
 
 .controls label {
@@ -163,4 +172,19 @@ h1 {
 
 .disable-colors .note {
   background-color: #d8d8d8 !important; /* Grey */
+}
+
+@media (max-width: 600px) {
+  .controls {
+    flex-direction: column;
+  }
+  
+  .controls .row {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+.scale-label {
+  margin-left: 20px; /* Add margin to the scale label */
 }

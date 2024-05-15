@@ -1,0 +1,166 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.controls {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.controls label {
+  font-weight: bold;
+}
+
+.controls select {
+  margin-left: 10px;
+  padding: 5px;
+  font-size: 16px;
+}
+
+.gear-button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 24px; /* Increase the size of the gear icon */
+  margin-left: 10px;
+}
+
+.extra-options {
+  display: none;
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 20px; /* Add margin below the extra options */
+}
+
+#fretboard {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 800px;
+  margin: auto;
+}
+
+.string {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 5px;
+  position: relative;
+}
+
+.fret {
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+  text-align: center;
+  border: 0 solid #ccc;
+  border-bottom: .5px solid #000;
+  margin: 0;
+  padding: 0;
+  background-color: #fafafa;
+  position: relative;
+  z-index: 1; /* Ensure the fret is behind the notes */
+}
+
+.fret:nth-child(odd) {
+  background-color: #f0f0f0;
+}
+
+.fret::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  background-color: #000; /* Color of the string line */
+  transform: translateX(-50%);
+  z-index: 0; /* Ensure the line is behind the notes */
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.top-row {
+  position: relative;
+  background-color: transparent !important;
+}
+
+.left-edge {
+  border-left: 0.5px solid #000;
+  /* negative margine removes the gap created by 
+  the border on the opposite side. */
+  margin-right: -0.5px;
+}
+
+.right-edge {
+  border-right: 0.5px solid #000;
+  /* negative margine removes the gap created by 
+  the border on the opposite side. */
+  margin-left: -0.5px;
+}
+
+.top-row::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -4px; /* Adjust this value for the thickness */
+  height: 8px; /* Adjust this value for the thickness */
+  background-color: #000; /* Color of the thick border */
+}
+
+.first-row .fret::before {
+  content: none; /* Prevent the line from being drawn on the first row */
+}
+
+.note {
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  line-height: 35px;
+  text-align: center;
+  display: inline-block;
+  color: #000; /* Set note text color to black */
+  font-weight: bold;
+  position: relative; /* Ensure notes are positioned correctly over the line */
+  z-index: 2; /* Ensure notes are in front of the line and frets */
+}
+
+.note.A { background-color: #E57373; }  /* Red */
+.note.As { background-color: #F06292; } /* Pink for A# */
+.note.Bb { background-color: #F06292; } /* Pink for Bb */
+.note.B { background-color: #BA68C8; }  /* Purple */
+.note.C { background-color: #64B5F6; }  /* Light Blue */
+.note.Cs { background-color: #4FC3F7; } /* Cyan for C# */
+.note.Db { background-color: #4FC3F7; } /* Cyan for Db */
+.note.D { background-color: #4DB6AC; }  /* Teal */
+.note.Ds { background-color: #81C784; } /* Green for D# */
+.note.Eb { background-color: #81C784; } /* Green for Eb */
+.note.E { background-color: #DCE775; }  /* Lime */
+.note.F { background-color: #FFD54F; }  /* Yellow */
+.note.Fs { background-color: #FFB74D; } /* Orange for F# */
+.note.Gb { background-color: #FFB74D; } /* Orange for Gb */
+.note.G { background-color: #FF8A65; }  /* Deep Orange */
+.note.Gs { background-color: #A1887F; } /* Brown for G# */
+.note.Ab { background-color: #A1887F; } /* Brown for Ab */
+
+.disable-colors .note {
+  background-color: #d8d8d8 !important; /* Grey */
+}

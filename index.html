@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banjo Fretboard Visualizer</title>
+    <link rel="stylesheet" href="/src/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Banjo Fretboard Visualizer</h1>
+        <div class="controls">
+            <label for="tuning">Tuning:</label>
+            <select id="tuning"></select>
+
+            <label for="scaleNote">Scale:</label>
+            <select id="scaleNote"></select>
+            <select id="scaleType"></select>
+            <button id="toggleOptions" class="gear-button">⚙️</button>
+        </div>
+
+        <div class="extra-options">
+            <label for="leftHanded">Left Handed:</label>
+            <input type="checkbox" id="leftHanded">|
+
+            <label for="extraBass">Extra Bass String:</label>
+            <input type="checkbox" id="extraBass">|
+
+            <label for="disableColors">Disable Note Colors:</label>
+            <input type="checkbox" id="disableColors">
+        </div>
+
+        <div id="fretboard"></div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+</body>
+</html>

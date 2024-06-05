@@ -1,12 +1,17 @@
 import tunings from './tunings.json';
 import scales from './scales.json';
+import chords from './chords.json';
 
 const tuningSelect = document.getElementById('tuning');
 const scaleNoteSelect = document.getElementById('scaleNote');
 const scaleTypeSelect = document.getElementById('scaleType');
+const chordNoteSelect = document.getElementById('chordNote');
+const chordTypeSelect = document.getElementById('chordType');
+const displayChordCheckbox = document.getElementById('displayChord');
 const leftHandedCheckbox = document.getElementById('leftHanded');
 const extraBassCheckbox = document.getElementById('extraBass');
 const disableColorsCheckbox = document.getElementById('disableColors');
+const hideDroneFretsCheckbox = document.getElementById('hideDroneFrets');
 const fretboard = document.getElementById('fretboard');
 const extraOptions = document.querySelector('.extra-options');
 const container = document.querySelector('.container');
@@ -25,7 +30,20 @@ function isFlatScale(scaleNotes) {
     return scaleNotes.some(note => note.includes('b'));
 }
 
-function getFretboardNotes(tuning, scaleNotes, extraBass) {
+function getEquivalentNote(note, useFlats) {
+    const indexSharp = noteNamesSharps.indexOf(note);
+    const indexFlat = noteNamesFlats.indexOf(note);
+
+    if (useFlats && indexSharp !== -1) {
+        return noteNamesFlats[indexSharp];
+    }
+    if (!useFlats && indexFlat !== -1) {
+        return noteNamesSharps[indexFlat];
+    }
+    return note;
+}
+
+function getFretboardNotes(tuning, scaleNotes, chordNotes, extraBass, hideDroneFrets) {
     const fretboardNotes = [];
     const useFlats = isFlatScale(scaleNotes);
     const tuningNotes = [...tunings[tuning]];
@@ -42,13 +60,16 @@ function getFretboardNotes(tuning, scaleNotes, extraBass) {
         for (let fret = 0; fret <= 12; fret++) {
             if (stringIndex === 0 && fret < 5) { // Handle the fifth string starting at the fifth fret
                 stringNotes.push('');
+            } else if (hideDroneFrets && stringIndex === 0 && fret > 5) { // Hide fretted notes for the drone string except at the fifth fret
+                stringNotes.push('');
             } else {
                 const actualFret = stringIndex === 0 ? fret - 5 : fret;
                 const note = getNoteName(noteIndex + actualFret, useFlats);
-                if (scaleNotes.includes(note)) {
-                    stringNotes.push(note);
+                const equivalentNote = chordNotes ? getEquivalentNote(note, !useFlats) : note;
+                if (scaleNotes.includes(note) || (chordNotes && (chordNotes.includes(note) || chordNotes.includes(equivalentNote)))) {
+                    stringNotes.push({ note, inScale: scaleNotes.includes(note) });
                 } else {
-                    stringNotes.push('');
+                    stringNotes.push({ note: '', inScale: false });
                 }
             }
         }
@@ -58,16 +79,22 @@ function getFretboardNotes(tuning, scaleNotes, extraBass) {
     return fretboardNotes;
 }
 
-function updateFretboard() {
+export function updateFretboard() {
     const tuning = tuningSelect.value;
     const scaleNote = scaleNoteSelect.value;
     const scaleType = scaleTypeSelect.value;
+    const chordNote = displayChordCheckbox.checked ? chordNoteSelect.value : null;
+    const chordType = displayChordCheckbox.checked ? chordTypeSelect.value : null;
     const scaleNotes = scales[scaleNote][scaleType];
+    const chordNotes = chordType ? chords[chordNote][chordType] : null;
     const isLeftHanded = leftHandedCheckbox.checked;
     const extraBass = extraBassCheckbox.checked;
     const disableColors = disableColorsCheckbox.checked;
+    const hideDroneFrets = hideDroneFretsCheckbox.checked;
 
-    let notes = getFretboardNotes(tuning, scaleNotes, extraBass);
+    console.log('Chord Notes:', chordNotes); // Debugging line
+
+    let notes = getFretboardNotes(tuning, scaleNotes, chordNotes, extraBass, hideDroneFrets);
 
     fretboard.innerHTML = '';
 
@@ -85,7 +112,7 @@ function updateFretboard() {
         const stringDiv = document.createElement('div');
         stringDiv.className = 'string';
 
-        stringNotes.forEach((note, fretIndex) => {
+        stringNotes.forEach((noteObj, fretIndex) => {
             const fretDiv = document.createElement('div');
             fretDiv.className = 'fret';
 
@@ -113,7 +140,6 @@ function updateFretboard() {
                 fretDiv.classList.add('right-edge');
             }
 
-
             if (fretIndex === 0 || (!isLeftHanded && stringIndex === 0 && fretIndex === 5) || (isLeftHanded && stringIndex === notes.length - 1 && fretIndex === 5)) {
                 fretDiv.classList.add('top-row');
             }
@@ -122,11 +148,17 @@ function updateFretboard() {
                 fretDiv.classList.add('hidden');
             }
 
-            if (note) {
-                const noteClass = note.replace('#', 's').replace('b', 'b');
+            if (noteObj.note) {
+                const noteClass = noteObj.note.replace('#', 's').replace('b', 'b');
                 const noteDiv = document.createElement('div');
                 noteDiv.className = `note ${noteClass}`;
-                noteDiv.innerText = note;
+                if (chordNotes && (chordNotes.includes(noteObj.note) || chordNotes.includes(getEquivalentNote(noteObj.note, !isFlatScale(scaleNotes))))) {
+                    noteDiv.classList.add('highlight-chord');
+                    if (!noteObj.inScale) {
+                        noteDiv.classList.add('highlight-chord-out-of-scale');
+                    }
+                }
+                noteDiv.innerText = noteObj.note;
                 fretDiv.appendChild(noteDiv);
             }
             stringDiv.appendChild(fretDiv);
@@ -154,15 +186,55 @@ function updateScaleTypeOptions() {
     if (scaleTypes.includes(selectedScaleType)) {
         scaleTypeSelect.value = selectedScaleType;
     }
+
+    updateChordOptions();
+}
+
+function updateChordOptions() {
+    const chordNote = chordNoteSelect.value;
+    const selectedChordType = chordTypeSelect.value;
+    chordTypeSelect.innerHTML = '';
+
+    const chordTypes = chords[chordNote];
+    for (const type in chordTypes) {
+        if (chordTypes.hasOwnProperty(type)) {
+            const option = document.createElement('option');
+            option.value = type;
+            option.textContent = type;
+            chordTypeSelect.appendChild(option);
+        }
+    }
+
+    if (chordTypes[selectedChordType]) {
+        chordTypeSelect.value = selectedChordType;
+    }
+
+    updateChordNotesDisplay();
+}
+
+function updateChordNotesDisplay() {
+    const chordNote = chordNoteSelect.value;
+    const chordType = chordTypeSelect.value;
+    const chordNotesContainer = document.getElementById('chordNotesContainer');
+
+    chordNotesContainer.innerHTML = '';
+
+    if (chordType) {
+        const chordNotes = chords[chordNote][chordType];
+        chordNotesContainer.innerText = chordNotes.join(', ');
+    }
 }
 
 function saveSettings() {
     localStorage.setItem('tuning', tuningSelect.value);
     localStorage.setItem('scaleNote', scaleNoteSelect.value);
     localStorage.setItem('scaleType', scaleTypeSelect.value);
+    localStorage.setItem('chordNote', chordNoteSelect.value);
+    localStorage.setItem('chordType', chordTypeSelect.value);
     localStorage.setItem('leftHanded', leftHandedCheckbox.checked);
     localStorage.setItem('extraBass', extraBassCheckbox.checked);
     localStorage.setItem('disableColors', disableColorsCheckbox.checked);
+    localStorage.setItem('hideDroneFrets', hideDroneFretsCheckbox.checked);
     localStorage.setItem('extraOptionsVisible', extraOptions.style.display !== 'none');
 }
 
@@ -170,18 +242,24 @@ function loadSettings() {
     const savedTuning = localStorage.getItem('tuning');
     const savedScaleNote = localStorage.getItem('scaleNote');
     const savedScaleType = localStorage.getItem('scaleType');
+    const savedChordNote = localStorage.getItem('chordNote');
+    const savedChordType = localStorage.getItem('chordType');
     const savedLeftHanded = localStorage.getItem('leftHanded');
     const savedExtraBass = localStorage.getItem('extraBass');
     const savedDisableColors = localStorage.getItem('disableColors');
+    const savedHideDroneFrets = localStorage.getItem('hideDroneFrets');
     const savedExtraOptionsVisible = localStorage.getItem('extraOptionsVisible');
 
     if (savedTuning) tuningSelect.value = savedTuning;
     if (savedScaleNote) scaleNoteSelect.value = savedScaleNote;
     updateScaleTypeOptions(); // Populate scale type options based on saved scale note
     if (savedScaleType) scaleTypeSelect.value = savedScaleType;
+    if (savedChordNote) chordNoteSelect.value = savedChordNote;
+    if (savedChordType) chordTypeSelect.value = savedChordType;
     if (savedLeftHanded !== null) leftHandedCheckbox.checked = JSON.parse(savedLeftHanded);
     if (savedExtraBass !== null) extraBassCheckbox.checked = JSON.parse(savedExtraBass);
     if (savedDisableColors !== null) disableColorsCheckbox.checked = JSON.parse(savedDisableColors);
+    if (savedHideDroneFrets !== null) hideDroneFretsCheckbox.checked = JSON.parse(savedHideDroneFrets);
     if (savedExtraOptionsVisible !== null) {
         extraOptions.style.display = JSON.parse(savedExtraOptionsVisible) ? 'block' : 'none';
     }
@@ -207,9 +285,12 @@ export function initializeApp() {
         updateFretboard();
     });
     scaleTypeSelect.addEventListener('change', updateFretboard);
+    chordNoteSelect.addEventListener('change', updateChordOptions);
+    chordTypeSelect.addEventListener('change', updateFretboard);
     leftHandedCheckbox.addEventListener('change', updateFretboard);
     extraBassCheckbox.addEventListener('change', updateFretboard);
     disableColorsCheckbox.addEventListener('change', updateFretboard);
+    hideDroneFretsCheckbox.addEventListener('change', updateFretboard);
 
     // Load saved settings
     loadSettings();

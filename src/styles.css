@@ -21,15 +21,6 @@ h1 {
 .controls {
   margin-bottom: 20px;
   text-align: center;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.controls .row {
-  display: flex;
-  align-items: center; /* Center items vertically */
-  margin-bottom: 10px;
 }
 
 .controls label {
@@ -113,14 +104,14 @@ h1 {
 
 .left-edge {
   border-left: 0.5px solid #000;
-  /* negative margine removes the gap created by 
+  /* negative margin removes the gap created by 
   the border on the opposite side. */
   margin-right: -0.5px;
 }
 
 .right-edge {
   border-right: 0.5px solid #000;
-  /* negative margine removes the gap created by 
+  /* negative margin removes the gap created by 
   the border on the opposite side. */
   margin-left: -0.5px;
 }
@@ -174,17 +165,17 @@ h1 {
   background-color: #d8d8d8 !important; /* Grey */
 }
 
-@media (max-width: 600px) {
-  .controls {
-    flex-direction: column;
-  }
-  
-  .controls .row {
-    width: 100%;
-    justify-content: center;
-  }
+.chord-notes {
+  display: inline-block;
+  margin-left: 10px;
+  font-weight: bold;
 }
 
-.scale-label {
-  margin-left: 20px; /* Add margin to the scale label */
+
+.highlight-chord {
+  border: 4px solid #000; /* Border around chord notes */
+}
+
+.highlight-chord-out-of-scale {
+  border-style: dashed;
 }

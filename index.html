@@ -20,30 +20,33 @@
                 <select id="scaleType"></select>
                 <button id="toggleOptions" class="gear-button">⚙️</button>
             </div>
+            <div class="extra-options">
+                <label for="leftHanded">Left Handed:</label>
+                <input type="checkbox" id="leftHanded">|
+    
+                <label for="extraBass">Extra Bass String:</label>
+                <input type="checkbox" id="extraBass">|
+    
+                <label for="disableColors">Disable Note Colors:</label>
+                <input type="checkbox" id="disableColors">|
+    
+                <label for="hideDroneFrets">Hide Fretted Notes for Drone String:</label>
+                <input type="checkbox" id="hideDroneFrets">
+            </div>
+            <br />
             <div class="row">
-                
-                <label for="chordNote" class="chord-label">Show Chord Notes on Fretboard:</label>
+                <label for="displayChord">Show Chord on Fretboard:</label>
                 <input type="checkbox" id="displayChord">
-                
             </div>
             <div id="chordSelection" class="row" style="display: none;">
-                
+                <!-- <label for="chordNote" class="chord-label">Chord:</label> -->
                 <select id="chordNote"></select>
-                <select id="chordType"></select><strong>:</strong>
+                <select id="chordType"></select>
                 <div id="chordNotesContainer" class="chord-notes"></div>
             </div>
         </div>
 
-        <div class="extra-options">
-            <label for="leftHanded">Left Handed:</label>
-            <input type="checkbox" id="leftHanded">|
-
-            <label for="extraBass">Extra Bass String:</label>
-            <input type="checkbox" id="extraBass">|
-
-            <label for="disableColors">Disable Note Colors:</label>
-            <input type="checkbox" id="disableColors">
-        </div>
+        
 
         <div id="fretboard"></div>
     </div>

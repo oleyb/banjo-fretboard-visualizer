@@ -11,6 +11,7 @@ const displayChordCheckbox = document.getElementById('displayChord');
 const leftHandedCheckbox = document.getElementById('leftHanded');
 const extraBassCheckbox = document.getElementById('extraBass');
 const disableColorsCheckbox = document.getElementById('disableColors');
+const hideDroneFretsCheckbox = document.getElementById('hideDroneFrets');
 const fretboard = document.getElementById('fretboard');
 const extraOptions = document.querySelector('.extra-options');
 const container = document.querySelector('.container');
@@ -42,7 +43,7 @@ function getEquivalentNote(note, useFlats) {
     return note;
 }
 
-function getFretboardNotes(tuning, scaleNotes, chordNotes, extraBass) {
+function getFretboardNotes(tuning, scaleNotes, chordNotes, extraBass, hideDroneFrets) {
     const fretboardNotes = [];
     const useFlats = isFlatScale(scaleNotes);
     const tuningNotes = [...tunings[tuning]];
@@ -58,6 +59,8 @@ function getFretboardNotes(tuning, scaleNotes, chordNotes, extraBass) {
 
         for (let fret = 0; fret <= 12; fret++) {
             if (stringIndex === 0 && fret < 5) { // Handle the fifth string starting at the fifth fret
+                stringNotes.push('');
+            } else if (hideDroneFrets && stringIndex === 0 && fret > 5) { // Hide fretted notes for the drone string except at the fifth fret
                 stringNotes.push('');
             } else {
                 const actualFret = stringIndex === 0 ? fret - 5 : fret;
@@ -87,10 +90,11 @@ export function updateFretboard() {
     const isLeftHanded = leftHandedCheckbox.checked;
     const extraBass = extraBassCheckbox.checked;
     const disableColors = disableColorsCheckbox.checked;
+    const hideDroneFrets = hideDroneFretsCheckbox.checked;
 
     console.log('Chord Notes:', chordNotes); // Debugging line
 
-    let notes = getFretboardNotes(tuning, scaleNotes, chordNotes, extraBass);
+    let notes = getFretboardNotes(tuning, scaleNotes, chordNotes, extraBass, hideDroneFrets);
 
     fretboard.innerHTML = '';
 
@@ -217,7 +221,7 @@ function updateChordNotesDisplay() {
 
     if (chordType) {
         const chordNotes = chords[chordNote][chordType];
-        chordNotesContainer.innerText = `${chordNotes.join(', ')}`;
+        chordNotesContainer.innerText = chordNotes.join(', ');
     }
 }
 
@@ -230,6 +234,7 @@ function saveSettings() {
     localStorage.setItem('leftHanded', leftHandedCheckbox.checked);
     localStorage.setItem('extraBass', extraBassCheckbox.checked);
     localStorage.setItem('disableColors', disableColorsCheckbox.checked);
+    localStorage.setItem('hideDroneFrets', hideDroneFretsCheckbox.checked);
     localStorage.setItem('extraOptionsVisible', extraOptions.style.display !== 'none');
 }
 
@@ -242,6 +247,7 @@ function loadSettings() {
     const savedLeftHanded = localStorage.getItem('leftHanded');
     const savedExtraBass = localStorage.getItem('extraBass');
     const savedDisableColors = localStorage.getItem('disableColors');
+    const savedHideDroneFrets = localStorage.getItem('hideDroneFrets');
     const savedExtraOptionsVisible = localStorage.getItem('extraOptionsVisible');
 
     if (savedTuning) tuningSelect.value = savedTuning;
@@ -253,6 +259,7 @@ function loadSettings() {
     if (savedLeftHanded !== null) leftHandedCheckbox.checked = JSON.parse(savedLeftHanded);
     if (savedExtraBass !== null) extraBassCheckbox.checked = JSON.parse(savedExtraBass);
     if (savedDisableColors !== null) disableColorsCheckbox.checked = JSON.parse(savedDisableColors);
+    if (savedHideDroneFrets !== null) hideDroneFretsCheckbox.checked = JSON.parse(savedHideDroneFrets);
     if (savedExtraOptionsVisible !== null) {
         extraOptions.style.display = JSON.parse(savedExtraOptionsVisible) ? 'block' : 'none';
     }
@@ -283,6 +290,7 @@ export function initializeApp() {
     leftHandedCheckbox.addEventListener('change', updateFretboard);
     extraBassCheckbox.addEventListener('change', updateFretboard);
     disableColorsCheckbox.addEventListener('change', updateFretboard);
+    hideDroneFretsCheckbox.addEventListener('change', updateFretboard);
 
     // Load saved settings
     loadSettings();

@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Banjo Fretboard Visualizer</title>
-  <script type="module" crossorigin src="./assets/main-EIg5_PLx.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/main-2gS0lvw3.css">
+  <script type="module" crossorigin src="./assets/main-DhRBxBP4.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/main-BBFpobva.css">
 </head>
 <body>
     <div class="container">
@@ -21,18 +21,33 @@
                 <select id="scaleType"></select>
                 <button id="toggleOptions" class="gear-button">⚙️</button>
             </div>
+            <div class="extra-options">
+                <label for="leftHanded">Left Handed:</label>
+                <input type="checkbox" id="leftHanded">|
+    
+                <label for="extraBass">Extra Bass String:</label>
+                <input type="checkbox" id="extraBass">|
+    
+                <label for="disableColors">Disable Note Colors:</label>
+                <input type="checkbox" id="disableColors">|
+    
+                <label for="hideDroneFrets">Hide Fretted Notes for Drone String:</label>
+                <input type="checkbox" id="hideDroneFrets">
+            </div>
+            <br />
+            <div class="row">
+                <label for="displayChord">Show Chord on Fretboard:</label>
+                <input type="checkbox" id="displayChord">
+            </div>
+            <div id="chordSelection" class="row" style="display: none;">
+                <!-- <label for="chordNote" class="chord-label">Chord:</label> -->
+                <select id="chordNote"></select>
+                <select id="chordType"></select>
+                <div id="chordNotesContainer" class="chord-notes"></div>
+            </div>
         </div>
 
-        <div class="extra-options">
-            <label for="leftHanded">Left Handed:</label>
-            <input type="checkbox" id="leftHanded">|
-
-            <label for="extraBass">Extra Bass String:</label>
-            <input type="checkbox" id="extraBass">|
-
-            <label for="disableColors">Disable Note Colors:</label>
-            <input type="checkbox" id="disableColors">
-        </div>
+        
 
         <div id="fretboard"></div>
     </div>

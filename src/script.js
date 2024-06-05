@@ -247,7 +247,7 @@ function loadSettings() {
     const savedLeftHanded = localStorage.getItem('leftHanded');
     const savedExtraBass = localStorage.getItem('extraBass');
     const savedDisableColors = localStorage.getItem('disableColors');
-    const savedHideDroneFrets = localStorage.getItem('hideDroneFrets');
+    const savedHideDroneFrets = localStorage.getItem('hideDroneFrets') || true;
     const savedExtraOptionsVisible = localStorage.getItem('extraOptionsVisible');
 
     if (savedTuning) tuningSelect.value = savedTuning;

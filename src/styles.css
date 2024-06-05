@@ -172,3 +172,9 @@ h1 {
 .highlight-chord-out-of-scale {
   border-style: dashed;
 }
+
+.chord-notes {
+  display: inline-block;
+  margin-left: 10px;
+  font-weight: bold;
+}

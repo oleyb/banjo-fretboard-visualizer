@@ -21,9 +21,16 @@
                 <button id="toggleOptions" class="gear-button">⚙️</button>
             </div>
             <div class="row">
-                <label for="chordNote">Chord:</label>
+                
+                <label for="chordNote" class="chord-label">Show Chord Notes on Fretboard:</label>
+                <input type="checkbox" id="displayChord">
+                
+            </div>
+            <div id="chordSelection" class="row" style="display: none;">
+                
                 <select id="chordNote"></select>
-                <select id="chordType"></select>
+                <select id="chordType"></select><strong>:</strong>
+                <div id="chordNotesContainer" class="chord-notes"></div>
             </div>
         </div>
 

@@ -7,6 +7,7 @@ const scaleNoteSelect = document.getElementById('scaleNote');
 const scaleTypeSelect = document.getElementById('scaleType');
 const chordNoteSelect = document.getElementById('chordNote');
 const chordTypeSelect = document.getElementById('chordType');
+const displayChordCheckbox = document.getElementById('displayChord');
 const leftHandedCheckbox = document.getElementById('leftHanded');
 const extraBassCheckbox = document.getElementById('extraBass');
 const disableColorsCheckbox = document.getElementById('disableColors');
@@ -75,12 +76,12 @@ function getFretboardNotes(tuning, scaleNotes, chordNotes, extraBass) {
     return fretboardNotes;
 }
 
-function updateFretboard() {
+export function updateFretboard() {
     const tuning = tuningSelect.value;
     const scaleNote = scaleNoteSelect.value;
     const scaleType = scaleTypeSelect.value;
-    const chordNote = chordNoteSelect.value;
-    const chordType = chordTypeSelect.value;
+    const chordNote = displayChordCheckbox.checked ? chordNoteSelect.value : null;
+    const chordType = displayChordCheckbox.checked ? chordTypeSelect.value : null;
     const scaleNotes = scales[scaleNote][scaleType];
     const chordNotes = chordType ? chords[chordNote][chordType] : null;
     const isLeftHanded = leftHandedCheckbox.checked;
@@ -188,18 +189,35 @@ function updateScaleTypeOptions() {
 function updateChordOptions() {
     const chordNote = chordNoteSelect.value;
     const selectedChordType = chordTypeSelect.value;
-    chordTypeSelect.innerHTML = '<option value="">None</option>';
+    chordTypeSelect.innerHTML = '';
 
-    const chordTypes = Object.keys(chords[chordNote]);
-    chordTypes.forEach(type => {
-        const option = document.createElement('option');
-        option.value = type;
-        option.textContent = type;
-        chordTypeSelect.appendChild(option);
-    });
+    const chordTypes = chords[chordNote];
+    for (const type in chordTypes) {
+        if (chordTypes.hasOwnProperty(type)) {
+            const option = document.createElement('option');
+            option.value = type;
+            option.textContent = type;
+            chordTypeSelect.appendChild(option);
+        }
+    }
 
-    if (chordTypes.includes(selectedChordType)) {
+    if (chordTypes[selectedChordType]) {
         chordTypeSelect.value = selectedChordType;
+    }
+
+    updateChordNotesDisplay();
+}
+
+function updateChordNotesDisplay() {
+    const chordNote = chordNoteSelect.value;
+    const chordType = chordTypeSelect.value;
+    const chordNotesContainer = document.getElementById('chordNotesContainer');
+
+    chordNotesContainer.innerHTML = '';
+
+    if (chordType) {
+        const chordNotes = chords[chordNote][chordType];
+        chordNotesContainer.innerText = `${chordNotes.join(', ')}`;
     }
 }
 
